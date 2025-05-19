@@ -31,6 +31,5 @@ int main() {
         int ways = sol.climbStairs(n);
         cout << "Number of ways to climb " << n << " stairs: " << ways << endl;
     }
-    
     return 0;
 }
