@@ -1,101 +1,105 @@
 #include<iostream>
 using namespace std;
-class trieNode{
-    public:
-      char value;
-      trieNode* children[26];
-      bool isterminal;
-    
-    trieNode(char val){
-        for(int i=0;i<26;i++){
-            children[i]=NULL;
+
+class TrieNode {
+public:
+    TrieNode* children[26];
+    bool end;
+
+    TrieNode() {
+        end = false;
+        for (int i = 0; i < 26; i++) {
+            children[i] = NULL;
         }
-        this->value=val;
-        this->isterminal=false;
     }
-
-
-    
 };
-void InsertWord(trieNode * root , string word){
-   //base case 
-   //cout<<"recieved "<<word <<"   for insertion "<<endl;
-   if(word.length()==0){
-     root->isterminal=true;
-     return; 
-   }
-   char ch=word[0];
-   int index=ch-'a';
-   trieNode* child;
-   if(root->children[index] !=NULL){
-       child = root->children[index];
-   }
-   else{
-       child =new trieNode(ch);
-       root->children[index]=child;
-   }
-    InsertWord(root->children[index],word.substr(1));
-}
-bool search(trieNode*root,string word){
-    if(word.length()==0){
-        return root->isterminal;
-    }
-    char ch =word[0];
-    int index=ch-'a';
-    trieNode*child;
-    if(root->children[index]!=NULL){
-        child=root->children[index];
-    }
-    else{
-        return false;
-    }
-    return search(child,word.substr(1));
-}
-void delet(trieNode*root,string word){
-   if(word.length()==0){
-    root->isterminal=false;
-    return;
-   }
-   char ch=word[0];
-   int index=ch-'a';
-   trieNode*child;
-   if(root->children[index]!=NULL){
-    child=root->children[index];
-   }
-   else{
-    return;
-   }
-   delet(child,word.substr(1));
-}
-int main(){
-    trieNode * root = new trieNode('-');
-    // cout<<"enter the number string you want to enter :"<<endl;
-    // int n;
-    // cin>>n;
-    // for(int i=0;i<n;i++){
-    //     cout<<"enter string : "<<endl;
 
-    //     string s;
-    //     cin>>s;
-    //     InsertWord(root,s);
+class Trie {
+    TrieNode* root;
 
-    // }  
-    InsertWord(root,"love");
-    InsertWord(root,"ram");
-    InsertWord(root,"karan");
-    if(search(root,"ram")){
-        cout<<"found"<<endl;
-    }
-    else{
-        cout<<"Not found"<<endl;
-    }
-    delet(root,"ram");
-     if(search(root,"ram")){
-        cout<<"found"<<endl;
-    }
-    else{
-        cout<<"Not found"<<endl;
+public:
+    Trie() {
+        root = new TrieNode();
     }
 
+    void insert(string word) {
+        TrieNode* curr = root;
+        for (int i = 0; i<word.length(); i++) {
+            char ch = word[i];
+            int index = ch - 'a';
+            if (curr->children[index] == NULL) {
+                curr->children[index] = new TrieNode();
+             //    cout<<"inserted character is "<<ch<<endl;
+
+            }else{
+               //  cout<<"already inserted this prefix : "<<ch<<endl;
+            }
+            curr = curr->children[index];
+           
+        }
+        curr->end = true;
+    }
+    bool search(string word){
+        TrieNode* curr=root;
+        for(int i=0;i<word.length();i++){
+            char ch=word[i];
+            int index=ch-'a';
+            if(curr->children[index]==NULL){
+                   return false;
+            }
+            
+            curr = curr->children[index];
+           if(i==word.length()-1 && curr->end==false){
+                return false;
+            }
+        }
+        cout<<"the search word is : "<<word<<endl;
+        return true;
+    }
+    void delet(string word){
+        TrieNode*curr=root;
+        for(int i=0;i<word.length();i++){
+            char ch=word[i];
+            int index=ch-'a';
+            if(curr->children[index]==NULL){
+                cout<<"the word is not present in the string so we can't delete "<<endl;
+                return ;
+            }
+            curr=curr->children[index];
+            if(i==word.length()-1){
+                curr->end=false;
+            }
+        }
+    }
+    bool startswith(string word){
+        TrieNode*curr=root;
+        for(int i=0;i<word.length();i++){
+            char ch=word[i];
+            int index=ch-'a';
+            if(curr->children[index]==NULL){
+                cout<<"enter preifx is not present : "<<endl;
+                return false;
+            }
+            curr=curr->children[index];
+        }
+        cout<<"enter prefix is available :"<<endl;
+        return true;
+    }
+};
+
+int main() {
+    
+    Trie t;
+    t.insert("the");
+    t.insert("there");
+    t.search("the");
+   // t.search("ram");
+   t.delet("the");
+   if(t.search("the")){
+      cout<<" not delted :"<<endl;
+   }else{
+    cout<<"deleted :"<<endl;
+   }
+   t.startswith("their");
     return 0;
 }
